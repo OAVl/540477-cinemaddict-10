@@ -230,19 +230,19 @@ const createPopupTemplate = () => {
 
 const createFilterTemplate = () => {
   return (
-   `<nav class="main-navigation">
+    `<nav class="main-navigation">
       <a href="#all" class="main-navigation__item">All movies</a>
       <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">13</span></a>
       <a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">4</span></a>
       <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>
       <a href="#stats" class="main-navigation__item main-navigation__item--additional main-navigation__item--active">Stats</a>
-    </nav>
+     </nav>
   
-    <ul class="sort">
-    <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
-    <li><a href="#" class="sort__button">Sort by date</a></li>
-    <li><a href="#" class="sort__button">Sort by rating</a></li>
-  </ul>`
+     <ul class="sort">
+       <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
+       <li><a href="#" class="sort__button">Sort by date</a></li>
+       <li><a href="#" class="sort__button">Sort by rating</a></li>
+     </ul>`
   );
 };
 
@@ -316,26 +316,26 @@ const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const siteHeader = document.querySelector('.header');
-const siteMain = document.querySelector('.main');
+const siteHeader = document.querySelector(`.header`);
+const siteMain = document.querySelector(`.main`);
 
 render(siteHeader, createUserTemplate(), `beforeend`);
 render(siteMain, createFilterTemplate(), `beforeend`);
 render(siteMain, createFilmsTemplate(), `beforeend`);
 
-const films = document.querySelector('.films');
-const filmsContainer = films.querySelector('.films-list__container');
+const films = document.querySelector(`.films`);
+const filmsContainer = films.querySelector(`.films-list__container`);
 new Array(TASK_COUNT).fill(``).forEach(() => render(filmsContainer, createCardTemplate(), `beforeend`));
 
 render(filmsContainer, createButtonTemplate(), `beforeend`);
 
 render(siteMain, createTopRatedTemplate(), `beforeend`);
 render(siteMain, createCommentedTemplate(), `beforeend`);
-const filmExtra = document.querySelectorAll('.films-list--extra');
-const TopRatedContainer = filmExtra[0].querySelector('.films-list__container');
+const filmExtra = document.querySelectorAll(`.films-list--extra`);
+const TopRatedContainer = filmExtra[0].querySelector(`.films-list__container`);
 new Array(TASK_COUNT_ADDITIONAL).fill(``).forEach(() => render(TopRatedContainer, createCardTemplate(), `beforeend`));
 
-const commentContainer = filmExtra[1].querySelector('.films-list__container');
+const commentContainer = filmExtra[1].querySelector(`.films-list__container`);
 new Array(TASK_COUNT_ADDITIONAL).fill(``).forEach(() => render(commentContainer, createCardTemplate(), `beforeend`));
 
 render(siteMain, createStatisticTemplate(), `beforeend`);
