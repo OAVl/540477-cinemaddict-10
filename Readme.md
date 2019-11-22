@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Анастасия Оборина](https://up.htmlacademy.ru/ecmascript/10/user/540477).
-* Наставник: `Неизвестно`.
+* Наставник: [Kate Savasteeva](https://htmlacademy.ru/profile/id1155389).
 
 ---
 
