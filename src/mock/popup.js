@@ -41,7 +41,7 @@ const generatePopup = () => {
     actor: getRandomArrayItem(actors),
     dueDate,
     country: getRandomArrayItem(country),
-    };
+  };
 };
 
 const generateComment = () => {
@@ -49,7 +49,7 @@ const generateComment = () => {
     text: getRandomArrayItem(textComment),
     nameComment: getRandomArrayItem(nameComment),
     data: getRandomDate(),
-  }
+  };
 };
 
 const generateComments = (count) => {

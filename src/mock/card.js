@@ -25,8 +25,6 @@ const description = [
   `In rutrum ac purus sit amet tempus.`,
 ];
 
-
-
 const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
 
