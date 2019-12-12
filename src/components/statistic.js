@@ -1,4 +1,5 @@
 import {getRandomIntegerNumber} from '../mock/card.js';
+import {createElement} from "../util.js";
 
 const number = getRandomIntegerNumber(1, 130);
 
@@ -11,7 +12,7 @@ const createStatisticMarkup = (statistic, isChecked) => {
   );
 };
 
-export const createStatisticTemplate = (statistic) => {
+const createStatisticTemplate = (statistic) => {
   const statisticMarkup = statistic.map((it, i) => createStatisticMarkup(it, i === 0)).join(`\n`);
 
   return (
@@ -50,12 +51,26 @@ export const createStatisticTemplate = (statistic) => {
   );
 };
 
-export const createStatisticFooterTemplate = () => {
-  const statisticFooter = getRandomIntegerNumber(1, 150000);
+export default class Statistic {
 
-  return (
-    `<section className="footer__statistics">
-       <p>${statisticFooter} movies inside</p>
-     </section>`
-  );
-};
+  constructor(statistic) {
+    this._statistic = statistic;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createStatisticTemplate(this._statistic);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
