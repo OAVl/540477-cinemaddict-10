@@ -1,4 +1,6 @@
-export const createUserTemplate = (user) => {
+import {createElement} from "../util.js";
+
+const createUserTemplate = (user) => {
   const {userRating} = user;
 
   return (
@@ -8,3 +10,27 @@ export const createUserTemplate = (user) => {
      </section>`
   );
 };
+
+export default class User {
+
+  constructor(user) {
+    this._user = user;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createUserTemplate(this._user);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
