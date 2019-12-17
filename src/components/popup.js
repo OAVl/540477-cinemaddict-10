@@ -1,4 +1,4 @@
-import {createElement} from "../util.js";
+import AbstractComponent from './abstract-component.js';
 
 const createPopupTemplate = (popup) => {
   const {name, duration, genre, rating, poster, description, age, director, writer, actor, dueDate, country} = popup;
@@ -82,27 +82,18 @@ const createPopupTemplate = (popup) => {
   );
 };
 
-export default class Popup {
+export default class Popup extends AbstractComponent {
 
   constructor(popup) {
+    super();
     this._popup = popup;
-    this._element = null;
   }
 
   getTemplate() {
     return createPopupTemplate(this._popup);
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  popupButtonHandler(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
   }
 }
 
