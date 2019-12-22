@@ -5,19 +5,20 @@ import {remove, render, RenderPosition} from "../util.js";
 import {generateCards} from "../mock/card.js";
 import ButtonComponent from "../components/button.js";
 
-const TASK_COUNT = 22;
+const CARD_COUNT = 22;
 const SHOWING_TASKS_COUNT_ON_START = 5;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 5;
 let showingCardsCount = SHOWING_TASKS_COUNT_ON_START;
-const cardsSort = generateCards(TASK_COUNT);
+const cardsSort = generateCards(CARD_COUNT);
 
 const topRatedCards = cardsSort.filter((card) => card.rating).sort((prev, next) => next.rating - prev.rating).slice(0, 2);
 const mostCommentedCards = cardsSort.filter((card) => card.comments.length).sort((prev, next) => next.comments.length - prev.comments.length).slice(0, 2);
 
-const renderCard = (filmListElement, card) => {
+const renderCard = (filmListElement, card, popup, comment) => {
   const cardComponent = new CardComponent(card);
-  const commentComponent = new CommentComponent(card);
-  const popupComponent = new PopupComponent(card);
+  const commentComponent = new CommentComponent(comment);
+  const popupComponent = new PopupComponent(popup);
+
   const filmPosterElement = cardComponent.getElement().querySelector(`.film-card__poster`);
   const filmTitleElement = cardComponent.getElement().querySelector(`.film-card__title`);
   const filmCommentsQuantityElement = cardComponent.getElement().querySelector(`.film-card__comments`);
@@ -50,25 +51,27 @@ export default class PageController {
     this._buttonComponent = new ButtonComponent();
   }
 
-  render(cards) {
+  render(cards, popup, comment) {
     const container = this._container;
 
     for (const card of cards.slice(0, showingCardsCount)) {
-      renderCard(container, card);
+      renderCard(container, card, popup, comment);
     }
 
-    render(container, this._buttonComponent);
+    const filmsContainer = document.querySelector(`.films`);
+    render(filmsContainer, this._buttonComponent.getElement());
+
     const topRatedFilmsListElement = document.querySelector(`#top-rated .films-list__container`);
     const mostCommentedFilmsListElement = document.querySelector(`#most-commented .films-list__container`);
     if (topRatedFilmsListElement) {
       for (const card of topRatedCards) {
-        renderCard(topRatedFilmsListElement, card);
+        renderCard(topRatedFilmsListElement, card, popup, comment);
       }
     }
 
     if (mostCommentedFilmsListElement) {
       for (const card of mostCommentedCards) {
-        renderCard(mostCommentedFilmsListElement, card);
+        renderCard(mostCommentedFilmsListElement, card, popup, comment);
       }
     }
 
@@ -77,7 +80,7 @@ export default class PageController {
       showingCardsCount += SHOWING_TASKS_COUNT_BY_BUTTON;
 
       for (const card of cards.slice(prevCardsCount, showingCardsCount)) {
-        renderCard(container, card);
+        renderCard(container, card, popup, comment);
       }
 
       if (showingCardsCount >= cards.length) {

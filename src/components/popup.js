@@ -1,9 +1,17 @@
 import AbstractComponent from './abstract-component.js';
 
-const createPopupTemplate = (popup) => {
-  const {name, duration, genre, rating, poster, description, age, director, writer, actor, dueDate, country} = popup;
-  return (
-    `<section class="film-details">
+export default class Popup extends AbstractComponent {
+
+  constructor(popup) {
+    super();
+    this._popup = popup;
+  }
+
+  getTemplate() {
+    const createPopupTemplate = (popup) => {
+      const {name, duration, genre, rating, poster, description, age, director, writer, actor, dueDate, country} = popup;
+      return (
+        `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
         <div class="form-details__top-container">
           <div class="film-details__close">
@@ -79,17 +87,9 @@ const createPopupTemplate = (popup) => {
         </div>
        </form>
     </section>`
-  );
-};
+      );
+    };
 
-export default class Popup extends AbstractComponent {
-
-  constructor(popup) {
-    super();
-    this._popup = popup;
-  }
-
-  getTemplate() {
     return createPopupTemplate(this._popup);
   }
   popupButtonHandler(handler) {

@@ -1,5 +1,5 @@
 import TopRatedComponent from './components/topRated';
-import CommentedComponent from './components/commented';
+import MostCommentComponent from './components/mostComment';
 import FilmsComponent from './components/films';
 import FiltersComponent from './components/filter';
 import StatisticComponent from './components/statistic';
@@ -11,6 +11,7 @@ import {genStatistic} from './mock/statistic.js';
 import {userRating} from './mock/user.js';
 import {render} from './util.js';
 import PageController from './controllers/page';
+import {generateComment, generatePopup} from "./mock/popup.js";
 
 const siteFooterElement = document.querySelector(`.footer`);
 const siteHeader = document.querySelector(`.header`);
@@ -35,10 +36,13 @@ const films = filmsComponent.getElement().querySelector(`.films-list`);
 const filmsContainer = films.querySelector(`.films-list__container`);
 
 render(siteMain, new TopRatedComponent().getElement());
-render(siteMain, new CommentedComponent().getElement());
+render(siteMain, new MostCommentComponent().getElement());
+
+const popup = generatePopup();
+const comment = generateComment();
 
 const pageController = new PageController(filmsContainer);
-pageController.render(cardsSort);
+pageController.render(cardsSort, popup, comment);
 
 const statistic = genStatistic();
 render(siteMain, new StatisticComponent(statistic).getElement());

@@ -1,9 +1,17 @@
 import AbstractComponent from './abstract-component.js';
 
-const createCommentTemplate = (comment) => {
-  const {text, nameComment, data} = comment;
-  return (
-    `<section class="film-details__comments-wrap">
+export default class Comment extends AbstractComponent {
+
+  constructor(comment) {
+    super();
+    this._comment = comment;
+  }
+
+  getTemplate() {
+    const createCommentTemplate = (comment) => {
+      const {text, nameComment, data} = comment;
+      return (
+        `<section class="film-details__comments-wrap">
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
     
             <ul class="film-details__comments-list">
@@ -51,17 +59,9 @@ const createCommentTemplate = (comment) => {
               </div>
             </div>
           </section>`
-  );
-};
+      );
+    };
 
-export default class Comment extends AbstractComponent {
-
-  constructor(comment) {
-    super();
-    this._comment = comment;
-  }
-
-  getTemplate() {
     return createCommentTemplate(this._comment);
   }
 }
