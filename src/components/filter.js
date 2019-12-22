@@ -1,18 +1,26 @@
-import {createElement} from "../util.js";
+import AbstractComponent from './abstract-component.js';
 
-const createFilterMarkup = (filter) => {
-  const {name, count} = filter;
+export default class Filters extends AbstractComponent {
+  constructor(filters) {
+    super();
+    this._filters = filters;
 
-  return (
-    `<a href="#${name}" class="main-navigation__item">${name}<span class="main-navigation__item-count">${count}</span></a>`
-  );
-};
+  }
 
-const createFilterTemplate = (filters) => {
-  const filtersMarkup = filters.map((it, i) => createFilterMarkup(it, i === 0)).join(`\n`);
+  getTemplate() {
+    const createFilterMarkup = (filter) => {
+      const {name, count} = filter;
 
-  return (
-    `<nav class="main-navigation">
+      return (
+        `<a href="#${name}" class="main-navigation__item">${name}<span class="main-navigation__item-count">${count}</span></a>`
+      );
+    };
+
+    const createFilterTemplate = (filters) => {
+      const filtersMarkup = filters.map((it, i) => createFilterMarkup(it, i === 0)).join(`\n`);
+
+      return (
+        `<nav class="main-navigation">
       <a href="#all" class="main-navigation__item">All movies</a>
       ${filtersMarkup}
       <a href="#stats" class="main-navigation__item main-navigation__item--additional main-navigation__item--active">Stats</a>
@@ -23,29 +31,8 @@ const createFilterTemplate = (filters) => {
        <li><a href="#" class="sort__button">Sort by date</a></li>
        <li><a href="#" class="sort__button">Sort by rating</a></li>
      </ul>`
-  );
-};
-
-export default class Filters {
-
-  constructor(filters) {
-    this._filters = filters;
-    this._element = null;
-  }
-
-  getTemplate() {
+      );
+    };
     return createFilterTemplate(this._filters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

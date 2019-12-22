@@ -1,10 +1,16 @@
-import {createElement} from '../util.js';
+import AbstractComponent from './abstract-component.js';
 
-const createCardTemplate = (card) => {
-  const {name, duration, genre, rating, poster, description, year, comments} = card;
+export default class Card extends AbstractComponent {
+  constructor(card) {
+    super();
+    this._card = card;
+  }
+  getTemplate() {
+    const createCardTemplate = (card) => {
+      const {name, duration, genre, rating, poster, description, year, comments} = card;
 
-  return (
-    `<article class="film-card">
+      return (
+        `<article class="film-card">
           <h3 class="film-card__title">${name}</h3>
           <p class="film-card__rating">${rating}</p>
           <p class="film-card__info">
@@ -21,29 +27,9 @@ const createCardTemplate = (card) => {
             <button class="film-card__controls-item button film-card__controls-item--favorite">Mark as favorite</button>
           </form>
         </article>`
-  );
-};
+      );
+    };
 
-export default class Card {
-
-  constructor(card) {
-    this._card = card;
-    this._element = null;
-  }
-
-  getTemplate() {
     return createCardTemplate(this._card);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

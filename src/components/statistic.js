@@ -1,22 +1,33 @@
-import {getRandomIntegerNumber} from '../mock/card.js';
-import {createElement} from "../util.js";
+import {getRandomIntegerNumber, getRandomArrayItem} from '../mock/card.js';
+import AbstractComponent from './abstract-component.js';
 
-const number = getRandomIntegerNumber(1, 130);
+export default class Statistic extends AbstractComponent {
 
-const createStatisticMarkup = (statistic, isChecked) => {
-  const {name} = statistic;
+  constructor(statistic) {
+    super();
+    this._statistic = statistic;
+  }
 
-  return (
-    `<input type="radio" className="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${name}" value="${name}" ${isChecked ? `checked` : ``}>
-    <label htmlFor="statistic-${name}" className="statistic__filters-label"> ${name} </label>`
-  );
-};
+  getTemplate() {
+    const number = getRandomIntegerNumber(1, 130);
+    const numberHour = getRandomIntegerNumber(1, 200);
+    const numberMinute = getRandomIntegerNumber(1, 60);
+    const topRange = getRandomArrayItem([`Sci-Fi`, `Musical`, `Drama`, `Fantasy`, `Melodrama`, `Comedy`]);
 
-const createStatisticTemplate = (statistic) => {
-  const statisticMarkup = statistic.map((it, i) => createStatisticMarkup(it, i === 0)).join(`\n`);
+    const createStatisticMarkup = (statistic, isChecked) => {
+      const {name} = statistic;
 
-  return (
-    `<section className="statistic">
+      return (
+        `<input type="radio" className="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${name}" value="${name}" ${isChecked ? `checked` : ``}>
+    <label htmlFor="statistic-${name}" className="statistic__filters-label">${name}</label>`
+      );
+    };
+
+    const createStatisticTemplate = (statistics) => {
+      const statisticMarkup = statistics.map((it, i) => createStatisticMarkup(it, i === 0)).join(`\n`);
+
+      return (
+        `<section className="statistic">
       <p className="statistic__rank">
         Your rank
         <img className="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
@@ -24,8 +35,7 @@ const createStatisticTemplate = (statistic) => {
       </p>
   
       <form action="https://echo.htmlacademy.ru/" method="get" className="statistic__filters">
-        <p className="statistic__filters-description">Show stats:</p>
-      ${statisticMarkup}
+        <p className="statistic__filters-description">Show stats: ${statisticMarkup}</p> 
       </form>
   
       <ul class="statistic__text-list">
@@ -35,11 +45,11 @@ const createStatisticTemplate = (statistic) => {
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">${number} <span class="statistic__item-description">h</span> ${number} <span class="statistic__item-description">m</span></p>
+          <p class="statistic__item-text">${numberHour} <span class="statistic__item-description">h</span> ${numberMinute} <span class="statistic__item-description">m</span></p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
-          <p class="statistic__item-text">Sci-Fi</p>
+          <p class="statistic__item-text">${topRange}</p>
         </li>
       </ul>
   
@@ -48,29 +58,9 @@ const createStatisticTemplate = (statistic) => {
       </div>
   
     </section>`
-  );
-};
+      );
+    };
 
-export default class Statistic {
-
-  constructor(statistic) {
-    this._statistic = statistic;
-    this._element = null;
-  }
-
-  getTemplate() {
     return createStatisticTemplate(this._statistic);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

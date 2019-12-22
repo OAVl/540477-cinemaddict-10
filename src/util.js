@@ -24,3 +24,8 @@ export const render = (container, element, place = RenderPosition.BEFOREEND) => 
       break;
   }
 };
+
+export const remove = (component) => {
+  component.getElement().remove();
+  component.removeElement();
+};
