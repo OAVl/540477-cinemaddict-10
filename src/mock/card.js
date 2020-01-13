@@ -25,6 +25,20 @@ const description = [
   `In rutrum ac purus sit amet tempus.`,
 ];
 
+const director = [`Anthony Mann`, `Frank Darabont`, `Robert Zemeckis`];
+const writers = [`Anne Wigton`, `Heinz Herald`, `Richard Weil`];
+const actors = [`Erich von Stroheim`, `Mary Beth Hughes`, `Dan Duryea`];
+const country = [`USA`, `Canada`, `Russia`, `UK`];
+const nameComment = [`Tim Macoveev`, `John Doe`, `Alex Simpson`];
+const textComment = [
+  `Interesting setting and a good cast`,
+  `Booooooooooring`,
+  `Very very old. Meh`,
+  `Almost two hours? Seriously?`
+];
+
+const emojies = [`angry.png`, `puke.png`, `sleeping.png`, `smile.png`, `trophy.png`];
+
 const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
 
@@ -56,6 +70,9 @@ const generateCard = () => {
     description: getRandomDescription(description),
     year: getRandomIntegerNumber(1980, 2019),
     comments: `${getRandomIntegerNumber(1, 5)} comments`,
+    isWatchlist: getRandomIntegerNumber(1, 10),
+    isWatched: getRandomIntegerNumber(1, 10),
+    isFavorite: getRandomIntegerNumber(1, 10),
   };
 };
 
@@ -65,4 +82,66 @@ const generateCards = (count) => {
     .map(generateCard);
 };
 
-export {getRandomIntegerNumber, generateCard, generateCards, getRandomDescription, getRandomArrayItem, filmNames, description, genres, posters, getFilmNames};
+const getRandomDate = () => {
+  const targetDate = new Date();
+  const sign = Math.random() > 0.5 ? 1 : -1;
+  const diffValue = sign * getRandomIntegerNumber(0, 7);
+
+  targetDate.setDate(targetDate.getDate() + diffValue);
+
+  return targetDate;
+};
+
+const generatePopup = () => {
+  const dueDate = Math.random() > 0.5 ? null : getRandomDate();
+
+  return {
+    name: getFilmNames(filmNames),
+    duration: `${getRandomIntegerNumber(1, 2)}h ${getRandomIntegerNumber(0, 59)}m`,
+    genre: getRandomArrayItem(genres),
+    rating: getRandomIntegerNumber(1, 10),
+    poster: getRandomArrayItem(posters),
+    description: getRandomDescription(description),
+    age: getRandomIntegerNumber(0, 18),
+    director: getRandomArrayItem(director),
+    writer: getRandomArrayItem(writers),
+    actor: getRandomArrayItem(actors),
+    dueDate,
+    comments: generateComments(),
+    country: getRandomArrayItem(country),
+    isWatchlist: getRandomIntegerNumber(1, 10),
+    isWatched: getRandomIntegerNumber(1, 10),
+    isFavorite: getRandomIntegerNumber(1, 10),
+  };
+};
+
+const generateComment = () => {
+  return {
+    id: String(new Date() + Math.random()),
+    nameComment: getRandomArrayItem(nameComment),
+    text: getRandomArrayItem(textComment),
+    data: getRandomDate(),
+    emoji: `./images/emoji/${getRandomArrayItem(emojies)}`
+  };
+};
+
+const generateComments = (count = 4) => {
+  return new Array(count)
+    .fill(``)
+    .map(generateComment);
+};
+
+export {
+  generatePopup,
+  generateComment,
+  generateComments,
+  getRandomIntegerNumber,
+  generateCard,
+  generateCards,
+  getRandomDescription,
+  getRandomArrayItem,
+  filmNames,
+  description,
+  genres,
+  posters,
+  getFilmNames};
