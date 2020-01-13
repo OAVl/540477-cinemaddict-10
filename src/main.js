@@ -1,5 +1,3 @@
-import TopRatedComponent from './components/topRated';
-import MostCommentComponent from './components/mostComment';
 import FilmsComponent from './components/films';
 import FiltersComponent from './components/filter';
 import StatisticComponent from './components/statistic';
@@ -11,38 +9,31 @@ import {genStatistic} from './mock/statistic.js';
 import {userRating} from './mock/user.js';
 import {render} from './util.js';
 import PageController from './controllers/page';
-import {generateComment, generatePopup} from "./mock/popup.js";
+import SortComponent from './components/sort.js';
 
 const siteFooterElement = document.querySelector(`.footer`);
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 
-const TASK_COUNT = 22;
+const CARD_COUNT = 22;
 
-const cardsSort = generateCards(TASK_COUNT);
-
-const topRatedCards = cardsSort.filter((card) => card.rating).sort((prev, next) => next.rating - prev.rating).slice(0, 2);
-const mostCommentedCards = cardsSort.filter((card) => card.comments.length).sort((prev, next) => next.comments.length - prev.comments.length).slice(0, 2);
+const cardsSort = generateCards(CARD_COUNT);
 
 const user = userRating();
 render(siteHeader, new UserComponent(user).getElement());
 const filter = genFilter();
 render(siteMain, new FiltersComponent(filter).getElement());
+const sortComponent = new SortComponent();
+render(siteMain, sortComponent.getElement());
 
-const filmsComponent = new FilmsComponent(topRatedCards.length, mostCommentedCards.length);
+const filmsComponent = new FilmsComponent();
 render(siteMain, filmsComponent.getElement());
 
 const films = filmsComponent.getElement().querySelector(`.films-list`);
 const filmsContainer = films.querySelector(`.films-list__container`);
 
-render(siteMain, new TopRatedComponent().getElement());
-render(siteMain, new MostCommentComponent().getElement());
-
-const popup = generatePopup();
-const comment = generateComment();
-
-const pageController = new PageController(filmsContainer);
-pageController.render(cardsSort, popup, comment);
+const pageController = new PageController(filmsContainer, sortComponent);
+pageController.render(cardsSort);
 
 const statistic = genStatistic();
 render(siteMain, new StatisticComponent(statistic).getElement());
