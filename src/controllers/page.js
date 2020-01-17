@@ -1,4 +1,4 @@
-import {remove, render, replace} from "../util.js";
+import {remove, render, replace} from "../utils/util.js";
 import ButtonComponent from "../components/button.js";
 import {SortType} from '../components/sort.js';
 import FilmsExtraSectionComponent from '../components/films-extra-section.js';

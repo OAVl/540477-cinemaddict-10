@@ -1,6 +1,6 @@
 import CardComponent from "../components/card.js";
 import PopupComponent from "../components/popup.js";
-import {remove, render, RenderPosition, replace} from "../util.js";
+import {remove, render, RenderPosition, replace} from "../utils/util.js";
 
 const Mode = {
   DEFAULT: `default`,

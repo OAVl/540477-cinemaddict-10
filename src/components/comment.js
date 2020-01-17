@@ -2,14 +2,14 @@ import AbstractComponent from './abstract-component.js';
 
 export default class Comment extends AbstractComponent {
 
-  constructor(comment) {
+  constructor(card) {
     super();
-    this._comment = comment;
+    this._comment = card;
   }
 
   getTemplate() {
-    const createCommentTemplate = (comment) => {
-      const {id, text, nameComment, data, emoji} = comment;
+    const createCommentTemplate = (card) => {
+      const {id, text, nameComment, data, emoji} = card;
       return (
         `    <ul class="film-details__comments-list">
               <li class="film-details__comment">
