@@ -1,6 +1,6 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import CommentComponent from "../components/comment.js";
-import {remove, render} from "../util.js";
+import {remove, render} from "../utils/util.js";
 
 export default class Popup extends AbstractSmartComponent {
 
@@ -12,7 +12,7 @@ export default class Popup extends AbstractSmartComponent {
 
   getTemplate() {
     const createPopupTemplate = (card) => {
-      const {name, duration, genre, rating, poster, description, age, director, writer, actor, dueDate, country, isWatchlist, isWatched, isFavorite} = card;
+      const {name, duration, genre, rating, poster, description, age, director, writer, actor, releaseData, country, isWatchlist, isWatched, isFavorite} = card;
       const isWatchedChecked = isWatched ? (`<div class="form-details__middle-container">
   <section class="film-details__user-rating-wrap">
     <div class="film-details__user-rating-controls">
@@ -90,7 +90,7 @@ export default class Popup extends AbstractSmartComponent {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${dueDate}</td>
+                  <td class="film-details__cell">${releaseData}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>

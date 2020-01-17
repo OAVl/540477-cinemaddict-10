@@ -1,3 +1,5 @@
+import {formatDate} from "../utils/moment";
+
 const filmNames = [`Frozen`, `Джокер`, `Однажды`, `в Голливуде`, `Капитан`, `Марвел`, `Форрест`, `Гамп`];
 
 const genres = [`Musical`, `Drama`, `Fantasy`, `Melodrama`, `Comedy`];
@@ -37,7 +39,19 @@ const textComment = [
   `Almost two hours? Seriously?`
 ];
 
-const emojies = [`angry.png`, `puke.png`, `sleeping.png`, `smile.png`, `trophy.png`];
+const MONTHS = [`January`,
+  `February`,
+  `March`,
+  `April`,
+  `May`,
+  `June`,
+  `July`,
+  `August`,
+  `September`,
+  `October`,
+  `November`,
+  `December`,
+];
 
 const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
@@ -48,6 +62,9 @@ const getRandomArrayItem = (array) => {
 const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(max * Math.random());
 };
+
+const emojies = [`angry.png`, `puke.png`, `sleeping.png`, `smile.png`, `trophy.png`];
+const year = getRandomIntegerNumber(1980, 2019);
 
 const getFilmNames = (array) => {
   const firstNames = getRandomArrayItem(array);
@@ -61,6 +78,7 @@ const getRandomDescription = (array) => {
 };
 
 const generateCard = () => {
+
   return {
     name: getFilmNames(filmNames),
     duration: `${getRandomIntegerNumber(1, 2)}h ${getRandomIntegerNumber(0, 59)}m`,
@@ -73,6 +91,18 @@ const generateCard = () => {
     isWatchlist: getRandomIntegerNumber(1, 10),
     isWatched: getRandomIntegerNumber(1, 10),
     isFavorite: getRandomIntegerNumber(1, 10),
+    age: getRandomIntegerNumber(0, 18),
+    director: getRandomArrayItem(director),
+    writer: getRandomArrayItem(writers),
+    actor: getRandomArrayItem(actors),
+    releaseData: formatDate(`${getRandomIntegerNumber(1, 28)}, ${getRandomArrayItem(MONTHS)}, ${year}`),
+    comment: generateComments(),
+    country: getRandomArrayItem(country),
+    id: String(new Date() + Math.random()),
+    nameComment: getRandomArrayItem(nameComment),
+    text: getRandomArrayItem(textComment),
+    data: getRandomDate(),
+    emoji: `./images/emoji/${getRandomArrayItem(emojies)}`
   };
 };
 
@@ -92,29 +122,6 @@ const getRandomDate = () => {
   return targetDate;
 };
 
-const generatePopup = () => {
-  const dueDate = Math.random() > 0.5 ? null : getRandomDate();
-
-  return {
-    name: getFilmNames(filmNames),
-    duration: `${getRandomIntegerNumber(1, 2)}h ${getRandomIntegerNumber(0, 59)}m`,
-    genre: getRandomArrayItem(genres),
-    rating: getRandomIntegerNumber(1, 10),
-    poster: getRandomArrayItem(posters),
-    description: getRandomDescription(description),
-    age: getRandomIntegerNumber(0, 18),
-    director: getRandomArrayItem(director),
-    writer: getRandomArrayItem(writers),
-    actor: getRandomArrayItem(actors),
-    dueDate,
-    comments: generateComments(),
-    country: getRandomArrayItem(country),
-    isWatchlist: getRandomIntegerNumber(1, 10),
-    isWatched: getRandomIntegerNumber(1, 10),
-    isFavorite: getRandomIntegerNumber(1, 10),
-  };
-};
-
 const generateComment = () => {
   return {
     id: String(new Date() + Math.random()),
@@ -132,9 +139,6 @@ const generateComments = (count = 4) => {
 };
 
 export {
-  generatePopup,
-  generateComment,
-  generateComments,
   getRandomIntegerNumber,
   generateCard,
   generateCards,

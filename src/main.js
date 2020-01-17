@@ -7,7 +7,7 @@ import {genFilter} from './mock/menu.js';
 import {generateCards} from './mock/card.js';
 import {genStatistic} from './mock/statistic.js';
 import {userRating} from './mock/user.js';
-import {render} from './util.js';
+import {render} from './utils/util.js';
 import PageController from './controllers/page';
 import SortComponent from './components/sort.js';
 
