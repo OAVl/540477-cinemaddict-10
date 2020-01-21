@@ -2,18 +2,9 @@ import AbstractSmartComponent from './abstract-smart-component.js';
 import CommentComponent from "../components/comment.js";
 import {remove, render} from "../utils/util.js";
 
-export default class Popup extends AbstractSmartComponent {
-
-  constructor(card) {
-    super();
-    this._popup = card;
-    this._comments = card.comments;
-  }
-
-  getTemplate() {
-    const createPopupTemplate = (card) => {
-      const {name, duration, genre, rating, poster, description, age, director, writer, actor, releaseData, country, isWatchlist, isWatched, isFavorite} = card;
-      const isWatchedChecked = isWatched ? (`<div class="form-details__middle-container">
+const createPopupTemplate = (card) => {
+  const {name, duration, genre, rating, poster, description, age, director, writer, actor, releaseData, country, isWatchlist, isWatched, isFavorite} = card;
+  const isWatchedChecked = isWatched ? (`<div class="form-details__middle-container">
   <section class="film-details__user-rating-wrap">
     <div class="film-details__user-rating-controls">
       <button class="film-details__watched-reset" type="button">Undo</button>
@@ -49,8 +40,8 @@ export default class Popup extends AbstractSmartComponent {
     </div>
   </section>
 </div>`) : ``;
-      return (
-        `<section class="film-details">
+
+  return (`<section class="film-details" tabindex="0" style="outline: none">
       <form class="film-details__inner" action="" method="get">
         <div class="form-details__top-container">
           <div class="film-details__close">
@@ -59,22 +50,22 @@ export default class Popup extends AbstractSmartComponent {
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
               <img class="film-details__poster-img" src=${poster} alt="">
-    
+
               <p class="film-details__age">${age}+</p>
             </div>
-    
+
             <div class="film-details__info">
               <div class="film-details__info-head">
                 <div class="film-details__title-wrap">
                   <h3 class="film-details__title">${name}</h3>
                   <p class="film-details__title-original">Original: ${name}</p>
                 </div>
-    
+
                 <div class="film-details__rating">
                   <p class="film-details__total-rating">${rating}</p>
                 </div>
               </div>
-    
+
               <table class="film-details__table">
                 <tr class="film-details__row">
                   <td class="film-details__term">Director</td>
@@ -101,36 +92,35 @@ export default class Popup extends AbstractSmartComponent {
                   <td class="film-details__cell">${country}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Genres</td>
-                  <td class="film-details__cell">
-                    <span class="film-details__genre">${genre}</span>
-                    <span class="film-details__genre">${genre}</span>
-                    <span class="film-details__genre">${genre}</span>
+                  <td class="film-details__term">${genre.length === 1 ? `Genre` : `Genres`}</td>
+                      <td class="film-details__cell">
+                        <span class="film-details__genre">${genre.length > 3 ? genre.slice(0, 3) : genre}</span>  
                 </tr>
               </table>
-    
+
               <p class="film-details__film-description">${description}</p>
             </div>
           </div>
-    
+
           <section class="film-details__controls">
             <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${isWatchlist ? `checked` : ``}>
                 <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-        
+
                 <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${isWatched ? `checked` : ``}>
                 <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-        
+
                 <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${isFavorite ? `checked` : ``}>
                 <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
               </section>
             </div>
             ${isWatchedChecked}
-            
-            <div class="form-details__bottom-container">
-            <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">0</span></h3>
 
-        <ul class="film-details__comments-list"></ul>
+            <div class="form-details__bottom-container">
+
+            <section class="film-details__comments-wrap">
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+          <ul class="film-details__comments-list">
+          </ul>
 
         <div class="film-details__new-comment">
           <div for="add-emoji" class="film-details__add-emoji-label">
@@ -167,13 +157,22 @@ export default class Popup extends AbstractSmartComponent {
       </div>
            </form>
         </section>`
-      );
-    };
+  );
+};
+
+export default class Popup extends AbstractSmartComponent {
+
+  constructor(card) {
+    super();
+    this._popup = card;
+    this._comments = card.comment;
+    this.renderComments();
+  }
+
+  getTemplate() {
+
 
     return createPopupTemplate(this._popup);
-  }
-  popupButtonHandler(handler) {
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
   }
 
   recoveryListeners() {
@@ -185,15 +184,22 @@ export default class Popup extends AbstractSmartComponent {
   }
 
   renderComments() {
-    this._comments.forEach((comment) => render(this._commentsContainer, new CommentComponent(comment).getElement()));
+    this._commentsContainer = this.getElement().querySelector(`.film-details__comments-list`);
+    this._commentsContainer.innerHTML = ``;
+    this._popup.comment.forEach((comment) => render(this._commentsContainer, new CommentComponent(comment).getElement())
+    );
+  }
+
+  rerenderCommentsBlockTitle() {
+    this.getElement().querySelector(`.film-details__comments-title`).innerHTML = `Comments <span class="film-details__comments-count">${this._comments.length}</span>`;
   }
 
   _subscribeOnEvents() {
     this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, () => {
-      this._card.isWatchlist = !this._card.isWatchlist;
+      this._popup.isWatchlist = !this._popup.isWatchlist;
     });
     this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, () => {
-      this._card.isWatched = !this._card.isWatched;
+      this._popup.isWatched = !this._popup.isWatched;
       this.rerender();
     });
     this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, () => {});
@@ -201,7 +207,6 @@ export default class Popup extends AbstractSmartComponent {
       remove(this);
     });
     this._commentsContainer = this.getElement().querySelector(`.film-details__comments-list`);
-    this.renderComments();
     this.setEmojiClickHandler();
   }
   setEmojiClickHandler() {
@@ -219,6 +224,16 @@ export default class Popup extends AbstractSmartComponent {
       });
     });
   }
+
+  clearForm() {
+    this.getElement().querySelector(`textarea`).value = null;
+    this.getElement().querySelector(`.film-details__new-comment-image`).src = ``;
+  }
+
+  updateCommentsArray(comment) {
+    this._comments.push(comment);
+  }
+
 }
 
 
