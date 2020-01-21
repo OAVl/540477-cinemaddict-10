@@ -38,7 +38,6 @@ const textComment = [
   `Very very old. Meh`,
   `Almost two hours? Seriously?`
 ];
-
 const MONTHS = [`January`,
   `February`,
   `March`,
@@ -65,6 +64,7 @@ const getRandomIntegerNumber = (min, max) => {
 
 const emojies = [`angry.png`, `puke.png`, `sleeping.png`, `smile.png`, `trophy.png`];
 const year = getRandomIntegerNumber(1980, 2019);
+const viewingDates = [`today`, `week`, `month`, `year`];
 
 const getFilmNames = (array) => {
   const firstNames = getRandomArrayItem(array);
@@ -78,31 +78,32 @@ const getRandomDescription = (array) => {
 };
 
 const generateCard = () => {
+  const hoursDuration = getRandomIntegerNumber(1, 3);
+  const minutesDuration = Math.floor(59 * Math.random());
 
   return {
+    id: String(new Date() + Math.random()),
     name: getFilmNames(filmNames),
     duration: `${getRandomIntegerNumber(1, 2)}h ${getRandomIntegerNumber(0, 59)}m`,
     genre: getRandomArrayItem(genres),
     rating: getRandomIntegerNumber(1, 10),
     poster: getRandomArrayItem(posters),
+    hoursDuration,
+    minutesDuration,
     description: getRandomDescription(description),
     year: getRandomIntegerNumber(1980, 2019),
-    comments: `${getRandomIntegerNumber(1, 5)} comments`,
-    isWatchlist: getRandomIntegerNumber(1, 10),
-    isWatched: getRandomIntegerNumber(1, 10),
-    isFavorite: getRandomIntegerNumber(1, 10),
+    countComments: `${getRandomIntegerNumber(1, 5)} comments`,
+    isWatchlist: Math.random() > 0.5,
+    isWatched: Math.random() > 0.5,
+    isFavorite: Math.random() > 0.5,
     age: getRandomIntegerNumber(0, 18),
     director: getRandomArrayItem(director),
     writer: getRandomArrayItem(writers),
     actor: getRandomArrayItem(actors),
     releaseData: formatDate(`${getRandomIntegerNumber(1, 28)}, ${getRandomArrayItem(MONTHS)}, ${year}`),
-    comment: generateComments(),
+    comment: generateComments(4),
     country: getRandomArrayItem(country),
-    id: String(new Date() + Math.random()),
-    nameComment: getRandomArrayItem(nameComment),
-    text: getRandomArrayItem(textComment),
-    data: getRandomDate(),
-    emoji: `./images/emoji/${getRandomArrayItem(emojies)}`
+    viewingDate: getRandomArrayItem(viewingDates),
   };
 };
 

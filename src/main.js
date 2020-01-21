@@ -1,41 +1,37 @@
 import FilmsComponent from './components/films';
-import FiltersComponent from './components/filter';
-import StatisticComponent from './components/statistic';
+import StatisticComponent, {FilterTypeStatistic} from './components/statistic';
 import UserComponent from './components/user';
-import StatisticFooterComponent from './components/statisticFooter';
-import {genFilter} from './mock/menu.js';
+import MoviesModel from './models/movies.js';
 import {generateCards} from './mock/card.js';
-import {genStatistic} from './mock/statistic.js';
-import {userRating} from './mock/user.js';
 import {render} from './utils/util.js';
 import PageController from './controllers/page';
 import SortComponent from './components/sort.js';
+import FilterController from './controllers/filter.js';
+import {RenderPosition} from "./utils/util";
 
-const siteFooterElement = document.querySelector(`.footer`);
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
-
 const CARD_COUNT = 22;
-
-const cardsSort = generateCards(CARD_COUNT);
-
-const user = userRating();
-render(siteHeader, new UserComponent(user).getElement());
-const filter = genFilter();
-render(siteMain, new FiltersComponent(filter).getElement());
+const cards = generateCards(CARD_COUNT);
+const footerStatistic = document.querySelector(`.footer__statistics p`);
+const statisticComponent = new StatisticComponent(cards, FilterTypeStatistic.ALL);
 const sortComponent = new SortComponent();
-render(siteMain, sortComponent.getElement());
-
 const filmsComponent = new FilmsComponent();
+
+render(siteHeader, new UserComponent().getElement());
+render(siteMain, sortComponent.getElement(), RenderPosition.AFTERBEGIN);
+render(siteMain, statisticComponent.getElement(), RenderPosition.AFTERBEGIN);
 render(siteMain, filmsComponent.getElement());
 
 const films = filmsComponent.getElement().querySelector(`.films-list`);
 const filmsContainer = films.querySelector(`.films-list__container`);
 
-const pageController = new PageController(filmsContainer, sortComponent);
-pageController.render(cardsSort);
+const cardsModel = new MoviesModel();
+cardsModel.setFilms(cards);
 
-const statistic = genStatistic();
-render(siteMain, new StatisticComponent(statistic).getElement());
-render(siteFooterElement, new StatisticFooterComponent().getElement());
+const filterComponent = new FilterController(siteMain, cardsModel);
+filterComponent.render();
+const pageController = new PageController(filmsContainer, sortComponent, cardsModel, filterComponent, statisticComponent);
+pageController.render();
 
+footerStatistic.textContent = `${cards.length} movies inside`;

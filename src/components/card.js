@@ -7,7 +7,7 @@ export default class Card extends AbstractComponent {
   }
   getTemplate() {
     const createCardTemplate = (card) => {
-      const {name, duration, genre, rating, poster, description, year, comments, isWatchlist, isWatched, isFavorite} = card;
+      const {name, duration, genre, rating, poster, description, year, countComments, isWatchlist, isWatched, isFavorite} = card;
 
       return (
         `<article class="film-card">
@@ -20,7 +20,7 @@ export default class Card extends AbstractComponent {
           </p>
           <img src=${poster} alt="" class="film-card__poster" tabindex="1">
           <p class="film-card__description">${description}</p>
-          <a class="film-card__comments">${comments}</a>
+          <a class="film-card__comments">${countComments}</a>
           <form class="film-card__controls">
             <button class="${isWatchlist ? `film-card__controls-item--active ` : ``} film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>
                 <button class="${isWatched ? `film-card__controls-item--active ` : ``} film-card__controls-item button film-card__controls-item--mark-as-watched">Mark as watched</button>
@@ -39,7 +39,7 @@ export default class Card extends AbstractComponent {
     }
   }
 
-  setButtonWatchlsitClickHanlder(handler) {
+  setButtonWatchlistClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`).addEventListener(`click`, handler);
   }
   setButtonWatchedClickHandler(handler) {
