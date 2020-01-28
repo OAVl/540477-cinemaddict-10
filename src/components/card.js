@@ -1,4 +1,17 @@
 import AbstractComponent from './abstract-component.js';
+import moment from "moment";
+
+const convertRuntime = (runtime) => {
+  const hours = (runtime / 60);
+  const rhours = Math.floor(hours);
+  const minutes = (hours - rhours) * 60;
+  const rminutes = Math.round(minutes);
+  return `${rhours}h ${rminutes}m`;
+};
+
+const convertReleaseDate = (date) => {
+  return moment(date).format(`MM/DD/YYYY`);
+};
 
 export default class Card extends AbstractComponent {
   constructor(card) {
@@ -7,24 +20,27 @@ export default class Card extends AbstractComponent {
   }
   getTemplate() {
     const createCardTemplate = (card) => {
-      const {name, duration, genre, rating, poster, description, year, countComments, isWatchlist, isWatched, isFavorite} = card;
+      const {title, description, poster, genre, runtime, date, totalRating, comments, watchList, alreadyWatched, favorite} = card;
+
+      const releaseDate = convertReleaseDate(date);
+      const convertedRuntime = convertRuntime(runtime);
 
       return (
         `<article class="film-card">
-          <h3 class="film-card__title">${name}</h3>
-          <p class="film-card__rating">${rating}</p>
+          <h3 class="film-card__title">${title}</h3>
+          <p class="film-card__rating">${totalRating}</p>
           <p class="film-card__info">
-            <span class="film-card__year">${year}</span>
-            <span class="film-card__duration">${duration}</span>
-            <span class="film-card__genre">${genre}</span>
+            <span class="film-card__year">${releaseDate}</span>
+            <span class="film-card__duration">${convertedRuntime}</span>
+            <span class="film-card__genre">${genre.slice(0, 2)}</span>
           </p>
           <img src=${poster} alt="" class="film-card__poster" tabindex="1">
-          <p class="film-card__description">${description}</p>
-          <a class="film-card__comments">${countComments}</a>
+          <p class="film-card__description">${description.slice(0, 39)}</p>
+          <a class="film-card__comments">${comments.length} comments</a>
           <form class="film-card__controls">
-            <button class="${isWatchlist ? `film-card__controls-item--active ` : ``} film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>
-                <button class="${isWatched ? `film-card__controls-item--active ` : ``} film-card__controls-item button film-card__controls-item--mark-as-watched">Mark as watched</button>
-                <button class="${isFavorite ? `film-card__controls-item--active ` : ``} film-card__controls-item button film-card__controls-item--favorite">Mark as favorite</button>
+            <button class="${watchList ? `film-card__controls-item--active ` : ``} film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>
+                <button class="${alreadyWatched ? `film-card__controls-item--active ` : ``} film-card__controls-item button film-card__controls-item--mark-as-watched">Mark as watched</button>
+                <button class="${favorite ? `film-card__controls-item--active ` : ``} film-card__controls-item button film-card__controls-item--favorite">Mark as favorite</button>
                   </form>
                 </article>`
       );

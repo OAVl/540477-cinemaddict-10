@@ -1,10 +1,102 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import CommentComponent from "../components/comment.js";
-import {remove, render} from "../utils/util.js";
+import {render} from "../utils/util.js";
+import moment from "moment";
+
+const convertRuntime = (runtime) => {
+  const hours = (runtime / 60);
+  const rhours = Math.floor(hours);
+  const minutes = (hours - rhours) * 60;
+  const rminutes = Math.round(minutes);
+  return `${rhours}h ${rminutes}m`;
+};
+
+const NUMBER_OF_GENRES = 3;
+const DESCRIPTION_CHARACTERS = 139;
+
+const convertReleaseDate = (date) => {
+  return moment(date).format(`MM/DD/YYYY`);
+};
 
 const createPopupTemplate = (card) => {
-  const {name, duration, genre, rating, poster, description, age, director, writer, actor, releaseData, country, isWatchlist, isWatched, isFavorite} = card;
-  const isWatchedChecked = isWatched ? (`<div class="form-details__middle-container">
+  const {title, description, poster, genre, runtime, date, totalRating, alternativeTitle, country, director, writers, actors, ageRating, comments, watchList, alreadyWatched, favorite} = card;
+
+  const releaseDate = convertReleaseDate(date);
+  const convertedRuntime = convertRuntime(runtime);
+
+  return (`<section class="film-details" tabindex="0" style="outline: none">
+      <form class="film-details__inner" action="" method="get">
+        <div class="form-details__top-container">
+          <div class="film-details__close">
+            <button class="film-details__close-btn" type="button">close</button>
+          </div>
+          <div class="film-details__info-wrap">
+            <div class="film-details__poster">
+              <img class="film-details__poster-img" src=${poster} alt="">
+
+              <p class="film-details__age">${ageRating}+</p>
+            </div>
+
+            <div class="film-details__info">
+              <div class="film-details__info-head">
+                <div class="film-details__title-wrap">
+                  <h3 class="film-details__title">${title}</h3>
+                  <p class="film-details__title-original">Original: ${alternativeTitle}</p>
+                </div>
+
+                <div class="film-details__rating">
+                  <p class="film-details__total-rating">${totalRating}</p>
+                </div>
+              </div>
+
+              <table class="film-details__table">
+                <tr class="film-details__row">
+                  <td class="film-details__term">Director</td>
+                  <td class="film-details__cell">${director}</td>
+                </tr>
+                <tr class="film-details__row">
+                  <td class="film-details__term">Writers</td>
+                  <td class="film-details__cell">${writers}</td>
+                </tr>
+                <tr class="film-details__row">
+                  <td class="film-details__term">Actors</td>
+                  <td class="film-details__cell">${actors}</td>
+                </tr>
+                <tr class="film-details__row">
+                  <td class="film-details__term">Release Date</td>
+                  <td class="film-details__cell">${releaseDate}</td>
+                </tr>
+                <tr class="film-details__row">
+                  <td class="film-details__term">Runtime</td>
+                  <td class="film-details__cell">${convertedRuntime}</td>
+                </tr>
+                <tr class="film-details__row">
+                  <td class="film-details__term">Country</td>
+                  <td class="film-details__cell">${country}</td>
+                </tr>
+                <tr class="film-details__row">
+                  <td class="film-details__term">${genre.length === 1 ? `Genre` : `Genres`}</td>
+                      <td class="film-details__cell">
+                        <span class="film-details__genre">${genre.length > NUMBER_OF_GENRES ? genre.slice(0, NUMBER_OF_GENRES).join(`  `) : genre.join(`  `)}</span>  
+                </tr>
+              </table>
+
+              <p class="film-details__film-description">${description.slice(0, DESCRIPTION_CHARACTERS)}</p>
+            </div>
+          </div>
+
+          <section class="film-details__controls">
+            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${watchList ? `checked` : ``}>
+                <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+
+                <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${alreadyWatched ? `checked` : ``}>
+                <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+
+                <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${favorite ? `checked` : ``}>
+                <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+              </section>
+            </div>
+            <div class="form-details__middle-container">
   <section class="film-details__user-rating-wrap">
     <div class="film-details__user-rating-controls">
       <button class="film-details__watched-reset" type="button">Undo</button>
@@ -33,106 +125,34 @@ const createPopupTemplate = (card) => {
           <label class="film-details__user-rating-label" for="rating-7">7</label>
           <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
           <label class="film-details__user-rating-label" for="rating-8">8</label>
-          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" checked>
+          <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9">
           <label class="film-details__user-rating-label" for="rating-9">9</label>
         </div>
       </section>
     </div>
   </section>
-</div>`) : ``;
-
-  return (`<section class="film-details" tabindex="0" style="outline: none">
-      <form class="film-details__inner" action="" method="get">
-        <div class="form-details__top-container">
-          <div class="film-details__close">
-            <button class="film-details__close-btn" type="button">close</button>
-          </div>
-          <div class="film-details__info-wrap">
-            <div class="film-details__poster">
-              <img class="film-details__poster-img" src=${poster} alt="">
-
-              <p class="film-details__age">${age}+</p>
-            </div>
-
-            <div class="film-details__info">
-              <div class="film-details__info-head">
-                <div class="film-details__title-wrap">
-                  <h3 class="film-details__title">${name}</h3>
-                  <p class="film-details__title-original">Original: ${name}</p>
-                </div>
-
-                <div class="film-details__rating">
-                  <p class="film-details__total-rating">${rating}</p>
-                </div>
-              </div>
-
-              <table class="film-details__table">
-                <tr class="film-details__row">
-                  <td class="film-details__term">Director</td>
-                  <td class="film-details__cell">${director}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Writers</td>
-                  <td class="film-details__cell">${writer}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Actors</td>
-                  <td class="film-details__cell">${actor}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${releaseData}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">Country</td>
-                  <td class="film-details__cell">${country}</td>
-                </tr>
-                <tr class="film-details__row">
-                  <td class="film-details__term">${genre.length === 1 ? `Genre` : `Genres`}</td>
-                      <td class="film-details__cell">
-                        <span class="film-details__genre">${genre.length > 3 ? genre.slice(0, 3) : genre}</span>  
-                </tr>
-              </table>
-
-              <p class="film-details__film-description">${description}</p>
-            </div>
-          </div>
-
-          <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${isWatchlist ? `checked` : ``}>
-                <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
-
-                <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${isWatched ? `checked` : ``}>
-                <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
-
-                <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${isFavorite ? `checked` : ``}>
-                <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
-              </section>
-            </div>
-            ${isWatchedChecked}
+</div>
 
             <div class="form-details__bottom-container">
 
             <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
-          <ul class="film-details__comments-list">
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+                 
+          <ul class="film-details__comments-list">        
+          
           </ul>
 
         <div class="film-details__new-comment">
           <div for="add-emoji" class="film-details__add-emoji-label">
-            <img src="images/emoji/smile.png" width="55" height="55" alt="emoji">
+            <img class="film-details__new-comment-image" src="">
           </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">Great movie!</textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"  minlength="15"></textarea>
           </label>
 
           <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smiling" checked>
+            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
             <label class="film-details__emoji-label" for="emoji-smile">
               <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
             </label>
@@ -161,17 +181,12 @@ const createPopupTemplate = (card) => {
 };
 
 export default class Popup extends AbstractSmartComponent {
-
   constructor(card) {
     super();
     this._popup = card;
-    this._comments = card.comment;
-    this.renderComments();
   }
 
   getTemplate() {
-
-
     return createPopupTemplate(this._popup);
   }
 
@@ -186,40 +201,33 @@ export default class Popup extends AbstractSmartComponent {
   renderComments() {
     this._commentsContainer = this.getElement().querySelector(`.film-details__comments-list`);
     this._commentsContainer.innerHTML = ``;
-    this._popup.comment.forEach((comment) => render(this._commentsContainer, new CommentComponent(comment).getElement())
-    );
-  }
-
-  rerenderCommentsBlockTitle() {
-    this.getElement().querySelector(`.film-details__comments-title`).innerHTML = `Comments <span class="film-details__comments-count">${this._comments.length}</span>`;
+    this._popup.commentsList.forEach((comment) => {
+      render(this._commentsContainer, new CommentComponent(comment).getElement());
+    });
   }
 
   _subscribeOnEvents() {
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, () => {
-      this._popup.isWatchlist = !this._popup.isWatchlist;
-    });
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, () => {
-      this._popup.isWatched = !this._popup.isWatched;
-      this.rerender();
-    });
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, () => {});
-    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, () => {
-      remove(this);
-    });
-    this._commentsContainer = this.getElement().querySelector(`.film-details__comments-list`);
     this.setEmojiClickHandler();
   }
+
+  rerenderCommentsBlockTitle() {
+    this.getElement().querySelector(`.film-details__comments-title`).innerHTML = `Comments <span class="film-details__comments-count">${this._popup.commentsList.length}</span>`;
+  }
+
+  showRatingBlock() {
+    const ratingBlock = this.getElement().querySelector(`.form-details__middle-container`);
+    if (this._popup.alreadyWatched) {
+      ratingBlock.style.display = `block`;
+    } else {
+      ratingBlock.style.display = `none`;
+    }
+  }
+
   setEmojiClickHandler() {
     const emojiContainer = this.getElement().querySelector(`.film-details__add-emoji-label img`);
-    const Emojies = {
-      'smiling': `./images/emoji/smile.png`,
-      'sleeping': `./images/emoji/sleeping.png`,
-      'puke': `./images/emoji/puke.png`,
-      'angry': `./images/emoji/angry.png`,
-    };
     this.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((button) => {
       button.addEventListener(`click`, () => {
-        emojiContainer.src = `${Emojies[button.value]}`;
+        emojiContainer.src = `./images/emoji/${button.value}.png`;
         emojiContainer.style.width = `100%`;
       });
     });
@@ -230,10 +238,20 @@ export default class Popup extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__new-comment-image`).src = ``;
   }
 
-  updateCommentsArray(comment) {
-    this._comments.push(comment);
+  updateCommentsArray(comments) {
+    this._popup.commentsList = comments;
   }
 
+  setRatingValue() {
+    this.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((button) => {
+      if (parseInt(button.value, 10) === this._popup.personalRating) {
+        button.checked = true;
+      }
+    });
+  }
+  getCard() {
+    return this._popup;
+  }
 }
 
 

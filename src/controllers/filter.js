@@ -2,6 +2,7 @@ import FilterComponent from '../components/filter.js';
 import {render, replace, RenderPosition} from '../utils/util.js';
 import {getFilmsByFilter, FilterType} from '../utils/filter.js';
 
+
 const ACTIVE_CLASS = `main-navigation__item--active`;
 
 export default class FilterController {
@@ -12,10 +13,8 @@ export default class FilterController {
     this._activeFilterType = FilterType.ALL;
     this._filterComponent = null;
 
-    this._statsButton = null;
-
     this._onDataChange = this._onDataChange.bind(this);
-    this._onFilterChange = this._onFilterChange.bind(this);
+    this._statsButton = null;
   }
   render() {
     const container = this._container;
@@ -24,6 +23,7 @@ export default class FilterController {
       return {
         name: filterType,
         count: getFilmsByFilter(allFilms, filterType).length,
+        // checked
       };
     });
     const oldComponent = this._filterComponent;
@@ -35,27 +35,18 @@ export default class FilterController {
     }
     this._statsButton = this._filterComponent.getElement().querySelector(`.main-navigation__item--additional`);
   }
-
-  _onFilterChange() {
-    this.render();
-  }
-
-  getFilterComponent() {
-    return this._filterComponent;
-  }
-
-  changeFilterType(filterType) {
-    this._activeFilterType = filterType;
-  }
-
   _onDataChange() {
     this.render();
   }
-
   updateData() {
     this._onDataChange();
   }
-
+  getFilterComponent() {
+    return this._filterComponent;
+  }
+  changeFilterType(filterType) {
+    this._activeFilterType = filterType;
+  }
   setFiltersHandler(handler) {
     this._filterComponent.getElement().querySelectorAll(`.main-navigation__item`).forEach((button) => {
       button.addEventListener(`click`, (evt) => {
@@ -65,14 +56,13 @@ export default class FilterController {
         } else {
           button.classList.remove(ACTIVE_CLASS);
         }
-        const activeFilterValue = evt.target.textContent.slice(0, -2);
+        const activeFilterValue = evt.target.hash;
         this.changeFilterType(activeFilterValue);
         this._moviesModel.setFilter(activeFilterValue);
         handler();
       });
     });
   }
-
   switchToStatistics(pageControllerHandler, statsHandler) {
     this._statsButton.addEventListener(`click`, () => {
       this.removeActiveClass();
@@ -81,18 +71,17 @@ export default class FilterController {
       statsHandler();
     });
   }
-
   switchToFilms(pageControllerHandler, statsHandler) {
-    const allMoviesButton = this._filterComponent.getElement().querySelector(`.main-navigation__item--all-movies`);
-    allMoviesButton.addEventListener(`click`, () => {
-      this._statsButton.classList.toggle(ACTIVE_CLASS);
-      pageControllerHandler();
-      statsHandler();
+    this._filterComponent.getElement().querySelectorAll(`.main-navigation__item`).forEach((button) => {
+      button.addEventListener(`click`, () => {
+        this._statsButton.classList.remove(ACTIVE_CLASS);
+        pageControllerHandler(); // show
+        statsHandler();
+      });
     });
   }
-
   removeActiveClass() {
-    this._filterComponent.getElement().querySelectorAll(`.main-navigation__item`).forEach((button) => {
+    this._filterComponent.getElement().querySelectorAll(`a`).forEach((button) => {
       button.classList.remove(ACTIVE_CLASS);
     });
   }

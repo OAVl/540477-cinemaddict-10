@@ -1,19 +1,19 @@
 import AbstractComponent from './abstract-component.js';
-import {formatDate} from "../utils/moment";
+import {formatDate} from "../utils/moment.js";
 
-const createCommentTemplate = (comment) => {
-  const {id, text, nameComment, data, emoji} = comment;
+const createCommentTemplate = (card) => {
+  const {id, author, comment, date, emotion} = card;
   return (
-    `    
+    `
               <li class="film-details__comment">
                 <span class="film-details__comment-emoji">
-                  <img src="./images/emoji/${emoji}" width="55" height="55" alt="emoji">
+                  <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji">
                 </span>
                 <div>
-                  <p class="film-details__comment-text">${text}</p>
+                  <p class="film-details__comment-text">${comment}</p>
                   <p class="film-details__comment-info">
-                    <span class="film-details__comment-author">${nameComment}</span>
-                    <span class="film-details__comment-day">${formatDate(data)}</span>
+                    <span class="film-details__comment-author">${author}</span>
+                    <span class="film-details__comment-day">${formatDate(date)}</span>
                     <button data-index-number="${id}" class="film-details__comment-delete">Delete</button>
                   </p>
                 </div>
@@ -25,9 +25,9 @@ const createCommentTemplate = (comment) => {
 
 export default class Comment extends AbstractComponent {
 
-  constructor(comment) {
+  constructor(card) {
     super();
-    this._comment = comment;
+    this._comment = card;
   }
 
   getTemplate() {

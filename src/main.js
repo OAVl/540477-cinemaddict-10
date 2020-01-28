@@ -1,37 +1,47 @@
-import FilmsComponent from './components/films';
-import StatisticComponent, {FilterTypeStatistic} from './components/statistic';
-import UserComponent from './components/user';
+import API from './api.js';
+import FilmsComponent from './components/films.js';
+import StatisticComponent, {FilterTypeStatistic} from './components/statistic.js';
+import UserComponent from './components/user.js';
 import MoviesModel from './models/movies.js';
-import {generateCards} from './mock/card.js';
 import {render} from './utils/util.js';
-import PageController from './controllers/page';
+import PageController from './controllers/page.js';
 import SortComponent from './components/sort.js';
 import FilterController from './controllers/filter.js';
-import {RenderPosition} from "./utils/util";
+import {RenderPosition} from "./utils/util.js";
+
+const AUTHORIZATION = `Basic eo0w590ik29889q`;
+const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
+
+const api = new API(END_POINT, AUTHORIZATION);
+
+const cardsModel = new MoviesModel();
 
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
-const CARD_COUNT = 22;
-const cards = generateCards(CARD_COUNT);
 const footerStatistic = document.querySelector(`.footer__statistics p`);
-const statisticComponent = new StatisticComponent(cards, FilterTypeStatistic.ALL);
+
 const sortComponent = new SortComponent();
 const filmsComponent = new FilmsComponent();
 
-render(siteHeader, new UserComponent().getElement());
-render(siteMain, sortComponent.getElement(), RenderPosition.AFTERBEGIN);
-render(siteMain, statisticComponent.getElement(), RenderPosition.AFTERBEGIN);
 render(siteMain, filmsComponent.getElement());
-
-const films = filmsComponent.getElement().querySelector(`.films-list`);
-const filmsContainer = films.querySelector(`.films-list__container`);
-
-const cardsModel = new MoviesModel();
-cardsModel.setFilms(cards);
+render(siteMain, sortComponent.getElement(), RenderPosition.AFTERBEGIN);
 
 const filterComponent = new FilterController(siteMain, cardsModel);
-filterComponent.render();
-const pageController = new PageController(filmsContainer, sortComponent, cardsModel, filterComponent, statisticComponent);
-pageController.render();
 
-footerStatistic.textContent = `${cards.length} movies inside`;
+api.getFilms()
+  .then((films) => {
+    cardsModel.setFilms(films);
+    filterComponent.render();
+    const statisticComponent = new StatisticComponent(cardsModel.getFilms(), FilterTypeStatistic.ALL);
+    render(siteHeader, new UserComponent(cardsModel.getAllFilms()).getElement());
+    const pageController = new PageController(filmsComponent, sortComponent, cardsModel, filterComponent, statisticComponent, api, new UserComponent(cardsModel.getAllFilms()));
+    render(siteMain, statisticComponent.getElement());
+    const promises = films.map((film) => api.getComments(film[`id`]).then((comments) => comments));
+    Promise.all(promises).then((comments) => {
+      cardsModel.setComments(comments);
+      pageController.render();
+      footerStatistic.textContent = `${cardsModel.getAllFilms().length} movies inside`;
+    });
+  });
+
+
