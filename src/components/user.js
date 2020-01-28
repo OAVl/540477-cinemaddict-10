@@ -1,32 +1,35 @@
 import AbstractComponent from './abstract-component.js';
-
-const checkUserRank = (int) => {
-  if (int >= 21) {
-    return `Movie Buff`;
-  } else if (int <= 20 && int >= 11) {
-    return `Fan`;
-  }
-  return `Novice`;
+import Common from "../utils/common";
+export const getAmountFilms = (films) => {
+  return films.reduce((accumulator, item) => {
+    return {
+      watchlist: accumulator.watchlist + item.watchlist,
+      alreadyWatched: accumulator.alreadyWatched + item.alreadyWatched,
+      favorite: accumulator.favorite + item.favorite
+    };
+  }, {watchlist: 0, favorite: 0, alreadyWatched: 0});
 };
 
-export default class User extends AbstractComponent {
 
-  constructor(user) {
+const createProfileTemplate = (films) => {
+  const historiesFilms = getAmountFilms(films).history;
+
+  return (
+    `<section class="header__profile profile">
+      <p class="profile__rating">${Common.getUserRank(historiesFilms)}</p>
+      <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+    </section>`
+  );
+};
+
+export default class Profile extends AbstractComponent {
+  constructor(films) {
     super();
-    this._user = user;
+
+    this._films = films;
   }
 
   getTemplate() {
-    const createUserTemplate = (user) => {
-
-      return (
-        `<section class="header__profile profile">
-       <p class="profile__rating">${checkUserRank(parseInt(user, 10))}</p>
-       <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-     </section>`
-      );
-    };
-
-    return createUserTemplate(this._user);
+    return createProfileTemplate(this._films);
   }
 }

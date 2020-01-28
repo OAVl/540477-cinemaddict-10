@@ -1,5 +1,7 @@
 import AbstractComponent from './abstract-component.js';
 import Chart from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {getFilmsByFilterStatistic} from "../utils/filter.js";
 
 export const FilterTypeStatistic = {
   ALL: `all`,
@@ -9,40 +11,12 @@ export const FilterTypeStatistic = {
   YEAR: `year`
 };
 
-const getWatchedFilmsAll = (films) => {
-  return films.filter((film) => film.isWatched);
-};
-
-const getWatchedFilmsToday = (films) => {
-  return films.filter((film) => film.viewingDate === `today` && film.isWatched);
-};
-
-const getWatchedFilmsWeek = (films) => {
-  return films.filter((film) => film.viewingDate === `week` && film.isWatched);
-};
-
-const getWatchedFilmsMonth = (films) => {
-  return films.filter((film) => film.viewingDate === `month` && film.isWatched);
-};
-
-const getWatchedFilmsYear = (films) => {
-  return films.filter((film) => film.viewingDate === `year` && film.isWatched);
-};
-
-const getFilmsByFilterStatistic = (films, filterTypeStatistic) => {
-  switch (filterTypeStatistic) {
-    case FilterTypeStatistic.ALL:
-      return getWatchedFilmsAll(films);
-    case FilterTypeStatistic.TODAY:
-      return getWatchedFilmsToday(films);
-    case FilterTypeStatistic.WEEK:
-      return getWatchedFilmsWeek(films);
-    case FilterTypeStatistic.MONTH:
-      return getWatchedFilmsMonth(films);
-    case FilterTypeStatistic.YEAR:
-      return getWatchedFilmsYear(films);
-  }
-  return films;
+const convertRuntime = (runtime) => {
+  const hours = (runtime / 60);
+  const rhours = Math.floor(hours);
+  const minutes = (hours - rhours) * 60;
+  const rminutes = Math.round(minutes);
+  return `${rhours}h ${rminutes}m`;
 };
 
 const genreCounter = (cards, prop) => {
@@ -52,25 +26,25 @@ const genreCounter = (cards, prop) => {
 
 const createStatisticTemplate = (cards) => {
   const totalFilms = cards.length;
-  let amountHours = 0;
-  let amountMinutes = 0;
+  let amountTime = 0;
   cards.forEach((card) => {
-    amountHours += card.hoursDuration;
-    amountMinutes += card.minutesDuration;
+    amountTime += card.runtime;
   });
 
-  const fractionalPart = ((amountMinutes / 60) + ``).slice(1, amountMinutes.length);
-
-  const amountTime = {
-    hours: amountHours + (Math.trunc(amountMinutes / 60)),
-    minutes: Math.trunc(+fractionalPart * 60)
-  };
+  const convertedRuntime = convertRuntime(amountTime);
 
   const getMostPopularGenre = () => {
     const genres = {
-      action: genreCounter(cards, `Action`),
-      musical: genreCounter(cards, `Musical`),
-      drama: genreCounter(cards, `Drama`)
+      Action: genreCounter(cards, `Action`),
+      Animation: genreCounter(cards, `Animation`),
+      Family: genreCounter(cards, `Family`),
+      Thriller: genreCounter(cards, `Thriller`),
+      SciFi: genreCounter(cards, `Sci-Fi`),
+      Horror: genreCounter(cards, `Horror`),
+      Adventure: genreCounter(cards, `Adventure`),
+      NoGenre: genreCounter(cards, undefined),
+      Comedy: genreCounter(cards, `Comedy`),
+      Drama: genreCounter(cards, `Drama`)
     };
     const sortedGenres = Object.entries(genres).sort((a, b) => b[1] - a[1]);
     return sortedGenres[0];
@@ -85,10 +59,10 @@ const createStatisticTemplate = (cards) => {
         <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
         <span class="statistic__rank-label">Sci-Fighter</span>
       </p>
-  
+
       <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
-        <p class="statistic__filters-description">Show stats:</p> 
-        
+        <p class="statistic__filters-description">Show stats:</p>
+
         <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all">
       <label for="statistic-all-time" class="statistic__filters-label">All time</label>
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
@@ -100,7 +74,7 @@ const createStatisticTemplate = (cards) => {
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
       <label for="statistic-year" class="statistic__filters-label">Year</label>
       </form>
-  
+
       <ul class="statistic__text-list">
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">You watched</h4>
@@ -108,18 +82,18 @@ const createStatisticTemplate = (cards) => {
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">${amountTime.hours} <span class="statistic__item-description">h</span> ${amountTime.minutes} <span class="statistic__item-description">m</span></p>
+          <p class="statistic__item-text">${convertedRuntime}</p>
         </li>
         <li class="statistic__text-item">
           <h4 class="statistic__item-title">Top genre</h4>
           <p class="statistic__item-text">${cards.length === 0 ? `—` : mostPopularGenre[0]}</p>
         </li>
       </ul>
-  
+
       <div class="statistic__chart-wrap">
         <canvas class="statistic__chart" width="1000"></canvas>
       </div>
-  
+
     </section>`
   );
 };
@@ -146,20 +120,45 @@ export default class Statistic extends AbstractComponent {
       const ctx = this.getElement().querySelector(`.statistic__chart`).getContext(`2d`);
       return new Chart(ctx, {
         type: `bar`,
+        plugins: [ChartDataLabels],
         data: {
-          labels: [`Action`, `Musical`, `Drama`],
+          labels: [`Action`, `Animation`, `Family`, `Thriller`, `Sci-Fi`, `Horror`, `Adventure`, `No Genre`, `Comedy`, `Drama`],
           datasets: [{
             label: `Favorite Genre`,
-            data: [genreCounter(this._watchedFilms, `Action`), genreCounter(this._watchedFilms, `Musical`), genreCounter(this._watchedFilms, `Drama`)],
+            data: [
+              genreCounter(this._watchedFilms, `Action`),
+              genreCounter(this._watchedFilms, `Animation`),
+              genreCounter(this._watchedFilms, `Family`),
+              genreCounter(this._watchedFilms, `Thriller`),
+              genreCounter(this._watchedFilms, `Sci-Fi`),
+              genreCounter(this._watchedFilms, `Horror`),
+              genreCounter(this._watchedFilms, `Adventure`),
+              genreCounter(this._watchedFilms, undefined),
+              genreCounter(this._watchedFilms, `Comedy`),
+              genreCounter(this._watchedFilms, `Drama`)],
             backgroundColor: [
               `rgba(255, 99, 132, 0.2)`,
               `rgba(54, 162, 235, 0.2)`,
-              `rgba(255, 206, 86, 0.2)`
+              `rgba(255, 206, 86, 0.2)`,
+              `rgba(255, 255, 86, 0.2)`,
+              `rgba(44, 155, 50, 0.2)`,
+              `rgba(0, 217, 255, 0.2)`,
+              `rgba(106, 0, 255, 0.2)`,
+              `rgba(225, 0, 255, 0.2)`,
+              `rgba(255, 0, 0, 0.2)`,
+              `rgba(255, 155, 23, 0.2)`
             ],
             borderColor: [
               `rgba(255, 99, 132, 1)`,
               `rgba(54, 162, 235, 1)`,
               `rgba(255, 206, 86, 1)`,
+              `rgba(255, 255, 86, 1)`,
+              `rgba(44, 155, 86, 1)`,
+              `rgba(0, 217, 255, 1)`,
+              `rgba(106, 0, 255, 1)`,
+              `rgba(225, 0, 255, 1)`,
+              `rgba(255, 0, 0, 1)`,
+              `rgba(255, 155, 23, 1)`
             ],
             borderWidth: 2,
           }]
@@ -167,9 +166,6 @@ export default class Statistic extends AbstractComponent {
         options: {
           legend: {
             display: false,
-          },
-          tooltips: {
-            mode: `nearest`
           },
           scales: {
             yAxes: [{
