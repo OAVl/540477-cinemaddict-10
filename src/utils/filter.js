@@ -1,13 +1,9 @@
+import {
+  FilterType,
+  FilterTypeStatistic
+} from '../const.js';
 
-import {FilterTypeStatistic} from "../components/statistic";
 import moment from 'moment';
-
-const FilterType = {
-  ALL: `All movies`,
-  WATCHLIST: `Watchlist`,
-  HISTORY: `History`,
-  FAVORITES: `Favorites`,
-};
 
 const getAllFilms = (films) => {
   return films.filter((film) => film);
@@ -25,6 +21,31 @@ const getFavoritesFilms = (films) => {
   return films.filter((film) => film.favorite);
 };
 
+const getWatchedFilmsAll = (films) => {
+  return films.filter((film) => film.alreadyWatched);
+};
+
+const getWatchedFilmsToday = (films) => {
+  const todayStartDate = moment(new Date()).subtract(24, `hours`).unix();
+  const todayEndDate = moment(new Date()).add(24, `hours`).unix();
+  return films.filter((film) => film.alreadyWatched && (moment(film.watchingDate).unix() <= todayEndDate && todayStartDate <= moment(film.watchingDate).unix()));
+};
+
+const getWatchedFilmsWeek = (films) => {
+  const weekStartDate = moment(new Date()).subtract(1, `week`).unix();
+  return films.filter((film) => film.alreadyWatched && moment(film.watchingDate).unix() >= weekStartDate);
+};
+
+const getWatchedFilmsMonth = (films) => {
+  const monthStartDate = moment(new Date()).subtract(1, `month`).unix();
+  return films.filter((film) => film.alreadyWatched && moment(film.watchingDate).unix() >= monthStartDate);
+};
+
+const getWatchedFilmsYear = (films) => {
+  const yearStartDate = moment(new Date()).subtract(1, `year`).unix();
+  return films.filter((film) => film.alreadyWatched && moment(film.watchingDate).unix() >= yearStartDate);
+};
+
 const getFilmsByFilter = (films, filterType) => {
   switch (filterType) {
     case FilterType.ALL:
@@ -37,31 +58,6 @@ const getFilmsByFilter = (films, filterType) => {
       return getFavoritesFilms(films);
   }
   return films;
-};
-
-const getWatchedFilmsAll = (films) => {
-  return films.filter((film) => film.alreadyWatched);
-};
-
-const getWatchedFilmsToday = (films) => {
-  const todayStartDate = moment(new Date()).format(`DD-MM-YYYY`).subtract(24, `hours`).unix();
-  const todayEndDate = moment(new Date()).format(`DD-MM-YYYY`).add(24, `hours`).unix();
-  return films.filter((film) => film.alreadyWatched && (moment(film.watchingDate).unix() <= todayEndDate && todayStartDate <= moment(film.watchingDate).unix()));
-};
-
-const getWatchedFilmsWeek = (films) => {
-  const weekStartDate = moment(new Date()).format(`DD-MM-YYYY`).subtract(1, `week`).unix();
-  return films.filter((film) => film.alreadyWatched && moment(film.watchingDate).unix() >= weekStartDate);
-};
-
-const getWatchedFilmsMonth = (films) => {
-  const monthStartDate = moment(new Date()).format(`DD-MM-YYYY`).subtract(1, `month`).unix();
-  return films.filter((film) => film.alreadyWatched && moment(film.watchingDate).unix() >= monthStartDate);
-};
-
-const getWatchedFilmsYear = (films) => {
-  const yearStartDate = moment(new Date()).format(`DD-MM-YYYY`).subtract(1, `year`).unix();
-  return films.filter((film) => film.alreadyWatched && moment(film.watchingDate).unix() >= yearStartDate);
 };
 
 const getFilmsByFilterStatistic = (films, filterTypeStatistic) => {
@@ -80,4 +76,11 @@ const getFilmsByFilterStatistic = (films, filterTypeStatistic) => {
   return films;
 };
 
-export {getAllFilms, getFavoritesFilms, getFilmsByFilter, getWatchedFilms, getWatchlistFilms, getFilmsByFilterStatistic, FilterType};
+export {
+  getAllFilms,
+  getFavoritesFilms,
+  getFilmsByFilter,
+  getWatchedFilms,
+  getWatchlistFilms,
+  getFilmsByFilterStatistic
+};

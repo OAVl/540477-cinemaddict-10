@@ -1,82 +1,37 @@
 const FilterType = {
-  ALL: `all`,
-  WATCHLIST: `watchlist`,
-  HISTORY: `history`,
-  FAVORITES: `favorites`,
-  STATS: `stats`
+  ALL: `#all`,
+  WATCHLIST: `#watchlist`,
+  HISTORY: `#history`,
+  FAVORITES: `#favorites`,
 };
 
-const MENU_NAMES = [
-  FilterType.WATCHLIST,
-  FilterType.HISTORY,
-  FilterType.FAVORITES
-];
-
-const StatisticsFilterValue = {
-  ALL_TIME: `all-time`,
+const FilterTypeStatistic = {
+  ALL: `all`,
   TODAY: `today`,
   WEEK: `week`,
   MONTH: `month`,
   YEAR: `year`
 };
 
-const STATISTICS_PERIODS = [
-  StatisticsFilterValue.ALL_TIME,
-  StatisticsFilterValue.TODAY,
-  StatisticsFilterValue.WEEK,
-  StatisticsFilterValue.MONTH,
-  StatisticsFilterValue.YEAR
-];
+const MOVIE_BUFF_RANK = 21;
+const FAN_RANK_MAX = 20;
+const FAN_RANK_MIN = 11;
 
-const Film = {
-  START: 0,
-  END: 2,
-  SHOW: 5
+const checkUserRank = (int) => {
+  if (int >= MOVIE_BUFF_RANK) {
+    return `Movie Buff`;
+  } else if (int <= FAN_RANK_MAX && int >= FAN_RANK_MIN) {
+    return `Fan`;
+  }
+  return `Novice`;
 };
 
-const UserRank = {
-  'NO_RANK': 0,
-  'NOTICE': 10,
-  'FAN': 20
+const convertRuntime = (runtime) => {
+  const hours = (runtime / 60);
+  const rhours = Math.floor(hours);
+  const minutes = (hours - rhours) * 60;
+  const rminutes = Math.round(minutes);
+  return `${rhours}h ${rminutes}m`;
 };
 
-const Description = {
-  'MAX_LENGTH': 140,
-  'DEFAULT_LENGTH': 139
-};
-
-const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  AFTEREND: `afterend`,
-  BEFOREEND: `beforeend`
-};
-
-const SortType = {
-  DATE_DOWN: `date-down`,
-  DEFAULT: `default`,
-  RATING_DOWN: `rating-down`
-};
-
-const FilterValue = {
-  WATCHLIST: `watchlist`,
-  WATCHED: `watched`,
-  FAVORITE: `favorite`
-};
-
-const Emoji = {
-  'SLEEPING': `sleeping.png`,
-  'SMILE': `smile.png`,
-  'PUKE': `puke.png`,
-  'ANGRY': `angry.png`
-};
-
-const CommentFeature = {
-  'TYPES': [`sleeping`, `smile`, `puke`, `angry`],
-  'TEXTS': [`Interesting setting and a good cast`, `Booooooooooring`,
-    `Very very old. Meh`, `Almost two hours? Seriously?`,
-    `Great movie!`, `I personally did't like the movie`, `Very interesting`],
-  'AUTHORS': [`Tim Macoveev`, `John Doe`, `Alexander Setro`, `Mary Chery`, `Kristina Selena`]
-};
-
-export {MENU_NAMES, Film, UserRank, Description, RenderPosition, SortType, FilterType,
-  StatisticsFilterValue, STATISTICS_PERIODS, FilterValue, Emoji, CommentFeature};
+export {checkUserRank, convertRuntime, FilterType, FilterTypeStatistic};

@@ -5,10 +5,9 @@ export const RenderPosition = {
 };
 
 export const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
+  const doc = new DOMParser().parseFromString(template, `text/html`);
 
-  return newElement.firstChild;
+  return doc.body.firstChild;
 };
 
 export const render = (container, element, place = RenderPosition.BEFOREEND) => {

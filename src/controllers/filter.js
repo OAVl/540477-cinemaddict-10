@@ -1,7 +1,7 @@
 import FilterComponent from '../components/filter.js';
+import {FilterType} from '../const.js';
 import {render, replace, RenderPosition} from '../utils/util.js';
-import {getFilmsByFilter, FilterType} from '../utils/filter.js';
-
+import {getFilmsByFilter} from '../utils/filter.js';
 
 const ACTIVE_CLASS = `main-navigation__item--active`;
 
@@ -23,7 +23,6 @@ export default class FilterController {
       return {
         name: filterType,
         count: getFilmsByFilter(allFilms, filterType).length,
-        // checked
       };
     });
     const oldComponent = this._filterComponent;
@@ -75,7 +74,7 @@ export default class FilterController {
     this._filterComponent.getElement().querySelectorAll(`.main-navigation__item`).forEach((button) => {
       button.addEventListener(`click`, () => {
         this._statsButton.classList.remove(ACTIVE_CLASS);
-        pageControllerHandler(); // show
+        pageControllerHandler();
         statsHandler();
       });
     });

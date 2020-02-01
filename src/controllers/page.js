@@ -1,11 +1,12 @@
 import {remove, render, replace} from "../utils/util.js";
 import ButtonComponent from "../components/button.js";
-import SortType from '../components/sort.js';
+import {SortType} from '../components/sort.js';
 import FilmsExtraSectionComponent from '../components/films-extra-section.js';
 import FilmsNoDataComponent from '../components/films-no-data.js';
 import MovieController from '../controllers/movie.js';
-import StatisticComponent, {FilterTypeStatistic} from '../components/statistic';
+import StatisticComponent from '../components/statistic';
 import UserComponent from '../components/user.js';
+import {FilterTypeStatistic} from '../const.js';
 
 import moment from 'moment';
 
@@ -147,10 +148,10 @@ export default class PageController {
     let sortedCards = [];
     const filmListContainer = this._container.getElement().querySelector(`.films .films-list__container`);
     switch (sortType) {
-      case SortType.DATE_SORT:
+      case SortType.DATE_UP:
         sortedCards = cards.slice().sort((a, b) => moment(b.date).unix() - moment(a.date).unix());
         break;
-      case SortType.RATING_SORT:
+      case SortType.RATING_UP:
         sortedCards = cards.slice().sort((a, b) => b.totalRating - a.totalRating);
         break;
       case SortType.DEFAULT:
