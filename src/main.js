@@ -1,6 +1,6 @@
 import API from './api.js';
 import FilmsComponent from './components/films.js';
-import StatisticComponent, {FilterTypeStatistic} from './components/statistic.js';
+import StatisticComponent from './components/statistic.js';
 import UserComponent from './components/user.js';
 import MoviesModel from './models/movies.js';
 import {render} from './utils/util.js';
@@ -8,6 +8,7 @@ import PageController from './controllers/page.js';
 import SortComponent from './components/sort.js';
 import FilterController from './controllers/filter.js';
 import {RenderPosition} from "./utils/util.js";
+import {FilterTypeStatistic} from './const.js';
 
 const AUTHORIZATION = `Basic eo0w590ik29889q`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;

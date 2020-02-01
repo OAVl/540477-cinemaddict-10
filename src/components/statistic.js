@@ -1,69 +1,70 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractComponent from '../components/abstract-component.js';
+import {
+  getFilmsByFilterStatistic
+} from '../utils/filter.js';
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {getFilmsByFilterStatistic} from "../utils/filter.js";
-
-export const FilterTypeStatistic = {
-  ALL: `all`,
-  TODAY: `today`,
-  WEEK: `week`,
-  MONTH: `month`,
-  YEAR: `year`
-};
-
-const convertRuntime = (runtime) => {
-  const hours = (runtime / 60);
-  const rhours = Math.floor(hours);
-  const minutes = (hours - rhours) * 60;
-  const rminutes = Math.round(minutes);
-  return `${rhours}h ${rminutes}m`;
-};
+import {
+  convertRuntime,
+  checkUserRank
+} from '../const.js';
 
 const genreCounter = (cards, prop) => {
-  const genreArray = cards.filter((card) => card.genre[0] === prop);
-  return genreArray.length;
+  let counter = 0;
+  cards.forEach((card) => {
+    const isContains = card.genre.some((genre) => genre === prop);
+    if (isContains) {
+      counter += 1;
+    }
+    if (card.genre[0] === prop && prop === undefined) {
+      counter += 1;
+    }
+  });
+  return counter;
 };
 
-const createStatisticTemplate = (cards) => {
+const countGenres = (cards) => {
+  const genres = {
+    Action: genreCounter(cards, `Action`),
+    Animation: genreCounter(cards, `Animation`),
+    Family: genreCounter(cards, `Family`),
+    Thriller: genreCounter(cards, `Thriller`),
+    SciFi: genreCounter(cards, `Sci-Fi`),
+    Horror: genreCounter(cards, `Horror`),
+    Adventure: genreCounter(cards, `Adventure`),
+    NoGenre: genreCounter(cards, undefined),
+    Comedy: genreCounter(cards, `Comedy`),
+    Drama: genreCounter(cards, `Drama`),
+  };
+  return genres;
+};
+
+
+const createStatisticSectionTemplate = (cards, userRankCount, genres) => {
   const totalFilms = cards.length;
   let amountTime = 0;
+
   cards.forEach((card) => {
     amountTime += card.runtime;
   });
-
   const convertedRuntime = convertRuntime(amountTime);
 
-  const getMostPopularGenre = () => {
-    const genres = {
-      Action: genreCounter(cards, `Action`),
-      Animation: genreCounter(cards, `Animation`),
-      Family: genreCounter(cards, `Family`),
-      Thriller: genreCounter(cards, `Thriller`),
-      SciFi: genreCounter(cards, `Sci-Fi`),
-      Horror: genreCounter(cards, `Horror`),
-      Adventure: genreCounter(cards, `Adventure`),
-      NoGenre: genreCounter(cards, undefined),
-      Comedy: genreCounter(cards, `Comedy`),
-      Drama: genreCounter(cards, `Drama`)
-    };
-    const sortedGenres = Object.entries(genres).sort((a, b) => b[1] - a[1]);
+  const getMostPopularGenre = (genresList) => {
+    const sortedGenres = Object.entries(genresList).sort((a, b) => b[1] - a[1]);
     return sortedGenres[0];
   };
 
-  const mostPopularGenre = getMostPopularGenre();
+  const mostPopularGenre = getMostPopularGenre(genres);
 
-  return (
-    `<section class="statistic">
-      <p class="statistic__rank">
-        Your rank
-        <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-        <span class="statistic__rank-label">Sci-Fighter</span>
-      </p>
-
-      <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
-        <p class="statistic__filters-description">Show stats:</p>
-
-        <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all">
+  return `<section class="statistic">
+    <p class="statistic__rank">
+      Your rank
+      <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+      <span class="statistic__rank-label">${checkUserRank(userRankCount.length)}</span>
+    </p>
+    <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
+      <p class="statistic__filters-description">Show stats:</p>
+      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all">
       <label for="statistic-all-time" class="statistic__filters-label">All time</label>
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
       <label for="statistic-today" class="statistic__filters-label">Today</label>
@@ -73,47 +74,43 @@ const createStatisticTemplate = (cards) => {
       <label for="statistic-month" class="statistic__filters-label">Month</label>
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
       <label for="statistic-year" class="statistic__filters-label">Year</label>
-      </form>
-
-      <ul class="statistic__text-list">
-        <li class="statistic__text-item">
-          <h4 class="statistic__item-title">You watched</h4>
-          <p class="statistic__item-text statistic__item-text_watched-movies">${totalFilms}<span class="statistic__item-description">movies</span></p>
-        </li>
-        <li class="statistic__text-item">
-          <h4 class="statistic__item-title">Total duration</h4>
-          <p class="statistic__item-text">${convertedRuntime}</p>
-        </li>
-        <li class="statistic__text-item">
-          <h4 class="statistic__item-title">Top genre</h4>
-          <p class="statistic__item-text">${cards.length === 0 ? `—` : mostPopularGenre[0]}</p>
-        </li>
-      </ul>
-
-      <div class="statistic__chart-wrap">
-        <canvas class="statistic__chart" width="1000"></canvas>
-      </div>
-
-    </section>`
-  );
+    </form>
+    <ul class="statistic__text-list">
+      <li class="statistic__text-item">
+        <h4 class="statistic__item-title">You watched</h4>
+        <p class="statistic__item-text statistic__item-text_watched-movies">${totalFilms} <span class="statistic__item-description">movies</span></p>
+      </li>
+      <li class="statistic__text-item">
+        <h4 class="statistic__item-title">Total duration</h4>
+        <p class="statistic__item-text">${convertedRuntime}</p>
+      </li>
+      <li class="statistic__text-item">
+        <h4 class="statistic__item-title">Top genre</h4>
+        <p class="statistic__item-text">${cards.length === 0 ? `—` : mostPopularGenre[0]}</p>
+      </li>
+    </ul>
+    <div class="statistic__chart-wrap">
+      <canvas class="statistic__chart" width="1000"></canvas>
+    </div>
+  </section>`;
 };
 
-export default class Statistic extends AbstractComponent {
-
+export default class Statistics extends AbstractComponent {
   constructor(cards, activeRadioButton) {
     super();
-    this._statistic = cards;
+    this._cards = cards;
     this._activeStatisticFilterType = null;
     this.setFilterType(activeRadioButton);
-    this._watchedFilms = getFilmsByFilterStatistic(this._statistic, this._activeStatisticFilterType);
+    this._watchedFilms = getFilmsByFilterStatistic(this._cards, this._activeStatisticFilterType);
+    this._userRankCount = getFilmsByFilterStatistic(this._cards, `all`);
+    this._genres = countGenres(this._watchedFilms);
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
     this.hide();
     this.renderChart();
   }
-
   getTemplate() {
-    return createStatisticTemplate(this._watchedFilms);
+    return createStatisticSectionTemplate(this._watchedFilms, this._userRankCount, this._genres);
   }
   renderChart() {
     if (this._watchedFilms.length !== 0) {
@@ -126,16 +123,17 @@ export default class Statistic extends AbstractComponent {
           datasets: [{
             label: `Favorite Genre`,
             data: [
-              genreCounter(this._watchedFilms, `Action`),
-              genreCounter(this._watchedFilms, `Animation`),
-              genreCounter(this._watchedFilms, `Family`),
-              genreCounter(this._watchedFilms, `Thriller`),
-              genreCounter(this._watchedFilms, `Sci-Fi`),
-              genreCounter(this._watchedFilms, `Horror`),
-              genreCounter(this._watchedFilms, `Adventure`),
-              genreCounter(this._watchedFilms, undefined),
-              genreCounter(this._watchedFilms, `Comedy`),
-              genreCounter(this._watchedFilms, `Drama`)],
+              this._genres[`Action`],
+              this._genres[`Animation`],
+              this._genres[`Family`],
+              this._genres[`Thriller`],
+              this._genres[`SciFi`],
+              this._genres[`Horror`],
+              this._genres[`Adventure`],
+              this._genres[`NoGenre`],
+              this._genres[`Comedy`],
+              this._genres[`Drama`]
+            ],
             backgroundColor: [
               `rgba(255, 99, 132, 0.2)`,
               `rgba(54, 162, 235, 0.2)`,
@@ -158,7 +156,7 @@ export default class Statistic extends AbstractComponent {
               `rgba(106, 0, 255, 1)`,
               `rgba(225, 0, 255, 1)`,
               `rgba(255, 0, 0, 1)`,
-              `rgba(255, 155, 23, 1)`
+              `rgba(255, 155, 23, 1)`,
             ],
             borderWidth: 2,
           }]
@@ -191,13 +189,11 @@ export default class Statistic extends AbstractComponent {
     }
     return 0;
   }
-
   setFilterType(filterType) {
     this._activeStatisticFilterType = filterType;
   }
-
   setActiveFilter() {
-    this.getElement().querySelectorAll(`.statistic__filters-input`).forEach((button) => {
+    [...this.getElement().querySelectorAll(`.statistic__filters-input`)].forEach((button) => {
       if (button.value === this._activeStatisticFilterType) {
         button.checked = `true`;
       }
