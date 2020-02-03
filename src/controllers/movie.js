@@ -233,10 +233,10 @@ export default class MovieController {
         author: `You`,
         comment: this._popupComponent.getElement().querySelector(`textarea`).value,
         date: new Date(),
-        emoji: `${emojiSrc.value}`,
+        emotion: `${emojiSrc.value}`,
       };
 
-      if (newComment.text === `` || newComment.emoji === `./`) {
+      if (newComment.text === `` || newComment.emotion === `./`) {
         return;
       }
       const detailedCard = this._popupComponent.getCard();

@@ -1,13 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import moment from "moment";
-
-const convertRuntime = (runtime) => {
-  const hours = (runtime / 60);
-  const rhours = Math.floor(hours);
-  const minutes = (hours - rhours) * 60;
-  const rminutes = Math.round(minutes);
-  return `${rhours}h ${rminutes}m`;
-};
+import {convertRuntime} from '../const.js';
 
 const convertReleaseDate = (date) => {
   return moment(date).format(`MM/DD/YYYY`);
