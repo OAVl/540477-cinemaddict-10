@@ -2,14 +2,7 @@ import AbstractSmartComponent from './abstract-smart-component.js';
 import CommentComponent from "../components/comment.js";
 import {render} from "../utils/util.js";
 import moment from "moment";
-
-const convertRuntime = (runtime) => {
-  const hours = (runtime / 60);
-  const rhours = Math.floor(hours);
-  const minutes = (hours - rhours) * 60;
-  const rminutes = Math.round(minutes);
-  return `${rhours}h ${rminutes}m`;
-};
+import {convertRuntime} from '../const.js';
 
 const NUMBER_OF_GENRES = 3;
 const DESCRIPTION_CHARACTERS = 139;
