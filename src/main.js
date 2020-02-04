@@ -10,7 +10,7 @@ import FilterController from './controllers/filter.js';
 import {RenderPosition} from "./utils/util.js";
 import {FilterTypeStatistic} from './const.js';
 
-const AUTHORIZATION = `Basic eo0w590ik29889a`;
+const AUTHORIZATION = `Basic eo0w590ik29889q`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
 const api = new API(END_POINT, AUTHORIZATION);
