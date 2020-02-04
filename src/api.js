@@ -7,11 +7,13 @@ const Method = {
   DELETE: `DELETE`
 };
 
-const STATUS_IS_SUCCESS = 200;
-const STATUS_NOT_SUCCESS = 300;
+const STATUS = {
+  IS_SUCCESS: `200`,
+  NOT_SUCCESS: `300`
+};
 
 const checkStatus = (response) => {
-  if (response.status >= STATUS_IS_SUCCESS && response.status < STATUS_NOT_SUCCESS) {
+  if (response.status >= STATUS.IS_SUCCESS && response.status < STATUS.NOT_SUCCESS) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
